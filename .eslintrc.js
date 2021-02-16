@@ -8,5 +8,6 @@ module.exports = {
     'max-len': ['error', 200, { 'ignoreStrings': true }],
     'no-underscore-dangle': ['error', { 'allow': ['_id'] }],
     'semi': ['error', 'never'],
+    "no-param-reassign": [2, {"props": false}],
   }
 };
