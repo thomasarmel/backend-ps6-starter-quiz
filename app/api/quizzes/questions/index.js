@@ -1,7 +1,9 @@
 const { Router } = require('express')
 
-// const { Quiz } = require('../../../models')
 const { Question } = require('../../../models')
+const { Answer } = require('../../../models')
+
+const AnswersRouter = require('./answers')
 
 const router = new Router({ mergeParams: true })
 
@@ -9,6 +11,18 @@ const router = new Router({ mergeParams: true })
 router.get('/', (req, res) => {
   try {
     res.status(200).json(Question.get().filter((q) => q.quizId === parseInt(req.params.quizId, 10)))
+  } catch (err) {
+    res.status(500).json(err)
+  }
+})
+
+router.get('/:questionId', (req, res) => {
+  try {
+    if (Question.getById(req.params.questionId).quizId !== parseInt(req.params.quizId, 10)) {
+      res.status(500).json('There is no question matching quizId-questionId')
+    } else {
+      res.status(200).json(Question.getById(req.params.questionId))
+    }
   } catch (err) {
     res.status(500).json(err)
   }
@@ -51,5 +65,7 @@ router.delete('/:questionId', (req, res) => {
     res.status(500).json(err)
   }
 })
+
+router.use('/:questionId/answers', AnswersRouter)
 
 module.exports = router
