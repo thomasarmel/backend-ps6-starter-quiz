@@ -10,7 +10,11 @@ const router = new Router({ mergeParams: true })
 
 router.get('/', (req, res) => {
   try {
-    res.status(200).json(Question.get().filter((q) => q.quizId === parseInt(req.params.quizId, 10)))
+    const questions=Question.get().filter((q) => q.quizId === parseInt(req.params.quizId, 10))
+    questions.forEach((question) => {
+      question.answers = Answer.get().filter((a) => a.questionId === question.id)
+    })
+    res.status(200).json(questions)
   } catch (err) {
     res.status(500).json(err)
   }
@@ -21,7 +25,9 @@ router.get('/:questionId', (req, res) => {
     if (Question.getById(req.params.questionId).quizId !== parseInt(req.params.quizId, 10)) {
       res.status(500).json('There is no question matching quizId-questionId')
     } else {
-      res.status(200).json(Question.getById(req.params.questionId))
+      const question=Question.getById(req.params.questionId)
+      question.answers = Answer.get().filter((a) => a.questionId === question.id)
+      res.status(200).json(question)
     }
   } catch (err) {
     res.status(500).json(err)
